@@ -168,7 +168,7 @@ install_pg () {
   echo -e '\n\n  * baixando dump banco de dados\n'
   rm -f bootstrap.backup.zip
   rm -f bootstrap.backup
-  wget https://dl.dropboxusercontent.com/u/7006796/cdn/ieducativa/ieducar/comunidade/bootstrap.backup.zip
+  wget https://dl.dropboxusercontent.com/content_link/RWQaUmgm9Sv5Ktd4JYu67jxS0fWYSxsCdyIGCxGVdmuFoH3ttWLhDcXSUKmLVX3C/file?dl=1
   unzip bootstrap.backup.zip
   exit_if_failed $?
 
