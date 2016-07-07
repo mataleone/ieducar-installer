@@ -165,13 +165,6 @@ install_pg () {
     exit_if_failed $?
   fi
 
-  echo -e '\n\n  * baixando dump banco de dados\n'
-  rm -f bootstrap.backup.zip
-  rm -f bootstrap.backup
-  wget https://dl.dropboxusercontent.com/u/7006796/cdn/ieducativa/ieducar/comunidade/bootstrap.backup.zip
-  unzip bootstrap.backup.zip
-  exit_if_failed $?
-
   echo -e '\n\n * restaurando dump do banco de dados\n'
   ~/.pgvm/environments/8.2.23/bin/createdb $DBNAME -E latin1 -p 5433
   exit_if_failed $?
