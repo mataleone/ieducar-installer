@@ -163,25 +163,7 @@ install_pg () {
     ~/.pgvm/environments/8.2.23/bin/psql -d postgres -p 5433 -c "DROP USER IF EXISTS $DBUSER;"
     ~/.pgvm/environments/8.2.23/bin/createuser --superuser $DBUSER -p 5433
     exit_if_failed $?
-  fi
-
-  echo -e '\n\n  * baixando dump banco de dados\n'
-  rm -f bootstrap.backup.zip
-  rm -f bootstrap.backup
-  wget https://dl.dropboxusercontent.com/u/7006796/cdn/ieducativa/ieducar/comunidade/bootstrap.backup.zip
-  unzip bootstrap.backup.zip
-  exit_if_failed $?
-
-  echo -e '\n\n * restaurando dump do banco de dados\n'
-  ~/.pgvm/environments/8.2.23/bin/createdb $DBNAME -E latin1 -p 5433
-  exit_if_failed $?
-
-  ~/.pgvm/environments/8.2.23/bin/pg_restore -d $DBNAME -p 5433 -U $DBUSER --no-owner bootstrap.backup
-  exit_if_failed $?
-
-  rm -f bootstrap.backup.zip
-  rm -f bootstrap.backup
-
+ 
   echo -e '\n\n * definindo search_path\n'
   ~/.pgvm/environments/8.2.23/bin/psql -d $DBNAME -p 5433 -c 'ALTER DATABASE '$DBNAME' SET search_path = "$user", public, portal, cadastro, acesso, alimentos, consistenciacao, historico, pmiacoes, pmicontrolesis, pmidrh, pmieducar, pmiotopic, urbano, modules;'
   exit_if_failed $?
