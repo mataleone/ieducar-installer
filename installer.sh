@@ -121,34 +121,6 @@ install_pear () {
   exit_if_failed $?
 }
 
-install_pgvm () {
-  echo -e '\n\n  * instalando pgvm\n'
-  curl -s -L https://raw.github.com/guedes/pgvm/master/bin/pgvm-self-install | bash -s -- --update
-  exit_if_failed $?
-
-  #source ~/.bashrc
-
-  if [ -z "$pgvm_home" ]
-  then
-    pgvm_home=/home/$USER/.pgvm
-    pgvm_logs=${pgvm_home}/logs
-    pgvm_clusters=${pgvm_home}/clusters
-    pgvm_environments=${pgvm_home}/environments
-
-    export pgvm_home pgvm_logs pgvm_environments pgvm_clusters
-
-    export PATH=${pgvm_home}/bin:$PATH
-    export PATH=${pgvm_environments}/current/bin:$PATH
-  fi
-}
-
-install_pg () {
-  echo -e '\n\n  * instalando postgres 8.2 via pgvm\n'
-  pgvm install 8.2
-  pgvm use 8.2.23
-  pgvm cluster create main
-  pgvm cluster start main
-
   echo -e '\n'
   required_read '    informe o nome desejado para o banco de dados (ex: ieducar): '
   DBNAME=$_INPUT
@@ -162,7 +134,7 @@ install_pg () {
     echo -e '\n\n  * criando usuário do banco de dados\n'
     ~/.pgvm/environments/8.2.23/bin/psql -d postgres -p 5433 -c "DROP USER IF EXISTS $DBUSER;"
     ~/.pgvm/environments/8.2.23/bin/createuser --superuser $DBUSER -p 5433
-    exit_if_failed $?
+
   fi
 
   echo -e '\n\n  * baixando dump banco de dados\n'
@@ -170,14 +142,14 @@ install_pg () {
   rm -f bootstrap.backup
   wget https://dl.dropboxusercontent.com/u/7006796/cdn/ieducativa/ieducar/comunidade/bootstrap.backup.zip
   unzip bootstrap.backup.zip
-  exit_if_failed $?
+
 
   echo -e '\n\n * restaurando dump do banco de dados\n'
   ~/.pgvm/environments/8.2.23/bin/createdb $DBNAME -E latin1 -p 5433
-  exit_if_failed $?
+
 
   ~/.pgvm/environments/8.2.23/bin/pg_restore -d $DBNAME -p 5433 -U $DBUSER --no-owner bootstrap.backup
-  exit_if_failed $?
+
 
   rm -f bootstrap.backup.zip
   rm -f bootstrap.backup
