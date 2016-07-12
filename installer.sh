@@ -142,13 +142,6 @@ install_pgvm () {
   fi
 }
 
-install_pg () {
-  echo -e '\n\n  * instalando postgres 8.2 via pgvm\n'
-  pgvm install 8.2
-  pgvm use 8.2.23
-  pgvm cluster create main
-  pgvm cluster start main
-
   echo -e '\n'
   required_read '    informe o nome desejado para o banco de dados (ex: ieducar): '
   DBNAME=$_INPUT
@@ -168,29 +161,27 @@ install_pg () {
   echo -e '\n\n  * baixando dump banco de dados\n'
   rm -f bootstrap.backup.zip
   rm -f bootstrap.backup
-  wget https://dl.dropboxusercontent.com/u/7006796/cdn/ieducativa/ieducar/comunidade/bootstrap.backup.zip
-  unzip bootstrap.backup.zip
-  exit_if_failed $?
-
+  wget http://dl.dropboxusercontent.com/s/v92gumhy387saqv/bootstrap.backup
+  
   echo -e '\n\n * restaurando dump do banco de dados\n'
   ~/.pgvm/environments/8.2.23/bin/createdb $DBNAME -E latin1 -p 5433
-  exit_if_failed $?
+  
 
   ~/.pgvm/environments/8.2.23/bin/pg_restore -d $DBNAME -p 5433 -U $DBUSER --no-owner bootstrap.backup
-  exit_if_failed $?
+  
 
   rm -f bootstrap.backup.zip
   rm -f bootstrap.backup
 
   echo -e '\n\n * definindo search_path\n'
   ~/.pgvm/environments/8.2.23/bin/psql -d $DBNAME -p 5433 -c 'ALTER DATABASE '$DBNAME' SET search_path = "$user", public, portal, cadastro, acesso, alimentos, consistenciacao, historico, pmiacoes, pmicontrolesis, pmidrh, pmieducar, pmiotopic, urbano, modules;'
-  exit_if_failed $?
+  
 }
 
 install_git () {
   echo -e '\n\n  * instalando git\n'
   sudo apt-get install -y git-core
-  exit_if_failed $?
+  
 }
 
 clone_ieducar () {
@@ -203,7 +194,7 @@ clone_ieducar () {
 
   echo -e "\n\n  * clonando repositório ieducar no caminho $HOME/$APPDIR\n"
   git -c http.sslVerify=false clone http://softwarepublico.gov.br/gitlab/i-educar/i-educar.git $APPDIR
-  exit_if_failed $?
+  
 
   echo -e "\n\n  * reconfigurando ieducar\n"
   rpl "app.database.dbname   = ieducar" "app.database.dbname   = $DBNAME" $APPDIR/ieducar/configuration/ieducar.ini
